@@ -5,15 +5,13 @@ import Parser
 import System.Environment (getArgs)
 import Text.Parsec
 
-extractCnf :: Either ParseError Cnf -> Cnf
-extractCnf clause = case clause of
-  Left err -> error $ "Parsing error: " ++ show err
-  Right arr -> arr
-
 main :: IO ()
 main = do
-  content <- readFile "input/a.cnf"
-  let lines = lines content
-  let clauses = map (extractCnf . parseCnf) lines
-
-  print $ clauses
+  args <- getArgs
+  case args of
+    [filename] -> do
+      content <- readFile filename
+      case parse cnfParser "" content of
+        Left err -> print err
+        Right cnf -> print cnf
+    _ -> putStrLn "Usage: ./sat-solver <filename>"
