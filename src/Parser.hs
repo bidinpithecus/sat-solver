@@ -82,7 +82,7 @@ clauseParser = do
           then fail "Unexpected zero before clause end"
           else return lit
     )
-    (try (spaces >> char '0' >> spaces))
+    (spaces >> char '0' >> spaces)
 
 cnfParser :: Parser CNF
 cnfParser = do
