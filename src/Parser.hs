@@ -1,6 +1,7 @@
 module Parser where
 
 import Data.List (intercalate)
+import Data.Maybe (catMaybes)
 import Debug.Trace (trace)
 import System.Environment (getArgs)
 import Text.Parsec
@@ -10,6 +11,7 @@ import Text.Parsec
     eof,
     many,
     many1,
+    manyTill,
     newline,
     noneOf,
     oneOf,
@@ -72,13 +74,15 @@ problemParser = do
 
 clauseParser :: Parser Clause
 clauseParser = do
-  literals <- many1 $ do
-    lit <- read <$> many1 (oneOf "-123456789")
-    spaces
-    return lit
-  char '0'
-  spaces
-  return literals
+  manyTill
+    ( do
+        lit <- read <$> many1 (oneOf "-0123456789")
+        spaces
+        if lit == 0
+          then fail "Unexpected zero before clause end"
+          else return lit
+    )
+    (try (spaces >> char '0' >> spaces))
 
 cnfParser :: Parser CNF
 cnfParser = do
