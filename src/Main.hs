@@ -86,7 +86,7 @@ writeResult filename isSat maybeModel = do
   let outputPath = outputDir </> (baseName ++ ".res")
   writeFile outputPath $
     if isSat
-      then "SAT\n" ++ formatModel maybeModel
+      then "SAT\n" ++ formatModel maybeModel ++ " 0"
       else "UNSAT"
 
 -- Main function
