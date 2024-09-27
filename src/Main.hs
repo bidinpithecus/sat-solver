@@ -1,7 +1,4 @@
-import Data.List (nub)
 import Data.Map qualified as Map
-import Data.Set qualified as Set
-import Debug.Trace (trace)
 import Parser (CNF (..), Clause, Literal, cnfParser)
 import System.Directory (createDirectoryIfMissing)
 import System.Environment (getArgs)
@@ -10,18 +7,18 @@ import Text.Parsec (parse)
 
 -- Simplifies the CNF by applying unit propagation and returns the simplified CNF and the valuation
 simplifyCnf :: CNF -> (CNF, [Literal])
-simplifyCnf (CNF nVars nClauses clauses) =
+simplifyCnf (CNF nVars _ clauses) =
   let (simplifiedClauses, valuation) = simplify clauses []
    in (CNF nVars (length simplifiedClauses) simplifiedClauses, valuation)
   where
     -- Simplifies clauses and accumulates the valuation (truth assignments)
     simplify :: [Clause] -> [Literal] -> ([Clause], [Literal])
-    simplify clauses valuation =
-      let unitLiterals = findUnitLiterals clauses
-          newClauses = propagateUnitLiterals unitLiterals clauses
+    simplify clauses' valuation =
+      let unitLiterals = findUnitLiterals clauses'
+          newClauses = propagateUnitLiterals unitLiterals clauses'
           newValuation = valuation ++ unitLiterals -- Accumulate unit literals in the valuation
-       in if clauses == newClauses
-            then (clauses, newValuation)
+       in if clauses' == newClauses
+            then (clauses', newValuation)
             else simplify newClauses newValuation
 
     -- Finds all unit literals
@@ -30,10 +27,10 @@ simplifyCnf (CNF nVars nClauses clauses) =
 
     -- Propagates unit literals: removes clauses satisfied by unit literals and simplifies clauses with the negation
     propagateUnitLiterals :: [Literal] -> [Clause] -> [Clause]
-    propagateUnitLiterals unitLits clauses =
+    propagateUnitLiterals unitLits clauses' =
       filter
         (not . any (`elem` unitLits)) -- Remove clauses containing unit literals
-        (map (filter (`notElem` map negate unitLits)) clauses) -- Remove negations of unit literals in other clauses
+        (map (filter (`notElem` map negate unitLits)) clauses') -- Remove negations of unit literals in other clauses
 
 -- DPLL solver that returns both satisfiability and the complete model (truth assignments)
 dpll :: CNF -> Map.Map Int Bool -> (Bool, Map.Map Int Bool)
@@ -55,7 +52,7 @@ chooseLiteral (CNF _ _ clauses) = head (concat clauses)
 
 -- Function to assign a literal and simplify the CNF accordingly
 assignLiteral :: Literal -> Bool -> CNF -> CNF
-assignLiteral lit value (CNF nVars nClauses clauses) =
+assignLiteral lit value (CNF nVars _ clauses) =
   let newClauses =
         if value
           then filter (notElem lit) clauses -- Remove clauses where the literal is satisfied
@@ -100,7 +97,7 @@ main = do
     [filename] -> do
       content <- readFile filename
       case parse cnfParser "" content of
-        Left err -> print err
+        Left err -> print (filename ++ " contains the following error: " ++ show err)
         Right cnf -> do
           let (isSat, model) = solve cnf
           writeResult filename isSat model

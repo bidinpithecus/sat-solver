@@ -1,9 +1,6 @@
 module Parser where
 
 import Data.List (intercalate)
-import Data.Maybe (catMaybes)
-import Debug.Trace (trace)
-import System.Environment (getArgs)
 import Text.Parsec
   ( char,
     count,
@@ -15,11 +12,9 @@ import Text.Parsec
     newline,
     noneOf,
     oneOf,
-    parse,
     skipMany,
     spaces,
     string,
-    try,
   )
 import Text.Parsec.String (Parser)
 
@@ -55,21 +50,21 @@ instance Show CNF where
 
 commentParser :: Parser ()
 commentParser = do
-  char 'c'
+  _ <- char 'c'
   skipMany (noneOf "\n")
-  newline
+  _ <- newline
   return ()
 
 problemParser :: Parser (Int, Int)
 problemParser = do
-  char 'p'
+  _ <- char 'p'
   spaces
-  string "cnf"
+  _ <- string "cnf"
   spaces
   numVars <- read <$> many1 digit
   spaces
   numClauses <- read <$> many1 digit
-  newline
+  _ <- newline
   return (numVars, numClauses)
 
 clauseParser :: Parser Clause
@@ -86,7 +81,7 @@ clauseParser = do
 
 cnfParser :: Parser CNF
 cnfParser = do
-  many commentParser
+  _ <- many commentParser
   (vars, clausesCount) <- problemParser
   clauses <- count clausesCount clauseParser
   eof
