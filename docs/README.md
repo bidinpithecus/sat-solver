@@ -24,15 +24,15 @@ Você pode executar o resolvedor de SAT de duas formas:
    ```bash
    ./run input/kaqui.cnf
    ```
-2. Executar em todos os arquivos `.cnf` do diretório input
-   Se nenhum argumento for fornecido, o script irá procurar por todos os arquivos `.cnf` no diretório input e executar o resolvedor em cada um deles:
+2. Executar em todos os arquivos `.cnf` do diretório `input`
+   Caso nenhum argumento seja fornecido, o script irá buscar pelos arquivos `.cnf` no diretório `input` e executar o resolvedor em cada um deles:
    ```bash
    ./run
    ```
 
 ## Saída
 
-Para cada arquivo `.cnf` processado, o programa gera um arquivo `.res` no diretório output com o mesmo nome do arquivo de entrada. O conteúdo do arquivo de saída será:
+Para cada arquivo `.cnf` processado, o programa gera um arquivo `.res` no diretório `output` com o mesmo nome do arquivo de entrada. O conteúdo do arquivo de saída será:
 
 - SAT: Se a fórmula é satisfatível, seguido do modelo (as atribuições de variáveis).
 - UNSAT: Se a fórmula é insatisfatível.
