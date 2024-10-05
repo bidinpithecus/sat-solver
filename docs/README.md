@@ -15,7 +15,8 @@ Antes de compilar e executar o programa, certifique-se de que seu ambiente possu
 
 Você pode executar o resolvedor de SAT de duas formas:
 
-1. Executar em um único arquivo `.cnf`
+1. Executar em um único arquivo `.cnf`:
+
    Forneça o caminho para um arquivo `.cnf` como argumento ao script de execução:
    ```bash
    ./run <caminho-do-arquivo-cnf>
@@ -24,7 +25,8 @@ Você pode executar o resolvedor de SAT de duas formas:
    ```bash
    ./run input/kaqui.cnf
    ```
-2. Executar em todos os arquivos `.cnf` do diretório `input`
+2. Executar em todos os arquivos `.cnf` do diretório `input`:
+
    Caso nenhum argumento seja fornecido, o script irá buscar pelos arquivos `.cnf` no diretório `input` e executar o resolvedor em cada um deles:
    ```bash
    ./run
