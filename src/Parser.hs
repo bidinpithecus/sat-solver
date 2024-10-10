@@ -1,6 +1,7 @@
 module Parser where
 
-import Data.List (intercalate)
+import CNF (CNF (..), Clause)
+import Data.Set qualified as Set
 import Text.Parsec
   ( char,
     count,
@@ -20,10 +21,6 @@ import Text.Parsec.String (Parser)
 
 type Literal = Int
 
-type Clause = [Literal]
-
-data CNF = CNF {numVars :: Int, numClauses :: Int, clauses :: [Clause]}
-
 toSubscript :: Int -> String
 toSubscript n = concatMap toSub (show n)
   where
@@ -38,15 +35,6 @@ toSubscript n = concatMap toSub (show n)
     toSub '8' = "₈"
     toSub '9' = "₉"
     toSub _ = ""
-
-instance Show CNF where
-  show :: CNF -> String
-  show cnf = intercalate " ∧ " (map showClause (clauses cnf))
-    where
-      showClause clause = "(" ++ intercalate " ∨ " (map showLiteral clause) ++ ")"
-      showLiteral lit
-        | lit > 0 = "x" ++ toSubscript lit
-        | otherwise = "¬x" ++ toSubscript (negate lit)
 
 commentParser :: Parser ()
 commentParser = do
@@ -69,15 +57,19 @@ problemParser = do
 
 clauseParser :: Parser Clause
 clauseParser = do
-  manyTill
-    ( do
-        lit <- read <$> many1 (oneOf "-0123456789")
-        spaces
-        if lit == 0
-          then fail "Unexpected zero before clause end"
-          else return lit
-    )
-    (spaces >> char '0' >> spaces)
+  literals <-
+    manyTill
+      ( do
+          lit <- read <$> many1 (oneOf "-0123456789")
+          spaces
+          if lit == 0
+            then
+              fail "Unexpected zero before clause end"
+            else
+              return lit
+      )
+      (spaces >> char '0' >> spaces)
+  return (Set.fromList literals)
 
 cnfParser :: Parser CNF
 cnfParser = do
