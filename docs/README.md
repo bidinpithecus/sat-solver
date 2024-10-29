@@ -19,17 +19,17 @@ Você pode executar o resolvedor de SAT de duas formas:
 
    Forneça o caminho para um arquivo `.cnf` como argumento ao script de execução:
    ```bash
-   ./run <caminho-do-arquivo-cnf>
+   ./run.sh <caminho-do-arquivo-cnf>
    ```
    Por exemplo:
    ```bash
-   ./run input/kaqui.cnf
+   ./run.sh input/par8-1-c.cnf
    ```
 2. Executar em todos os arquivos `.cnf` do diretório `input`:
 
    Caso nenhum argumento seja fornecido, o script irá buscar pelos arquivos `.cnf` no diretório `input` e executar o resolvedor em cada um deles:
    ```bash
-   ./run
+   ./run.sh
    ```
 
 ## Saída
@@ -40,7 +40,7 @@ Para cada arquivo `.cnf` processado, o programa gera um arquivo `.res` no diret�
 - UNSAT: Se a fórmula é insatisfatível.
 
 Exemplo de saída para um arquivo satisfatível:
-```
+```res
 SAT
 1 -2 3 0
 ```
